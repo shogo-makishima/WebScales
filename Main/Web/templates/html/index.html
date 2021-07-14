@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+    <head>
+        <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='css/index.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.6.0.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+    </head>
+    <body onload="getDataStart()" style="background-color: #fffcf1 ">
+        <center>
+            <div>
+                <div>
+                    <p id="weight_text">Вес, <span id="units">гр.</span></p>
+                    <span id="weight" style="font-size: 256px; line-height: 128px;">NA</span>
+                    <br/>
+                    <br/>
+                    <button class="clear_button" onclick="if (currentTestTableLenght != 8) {sendGCODE('W11');}">Добавить</button>
+                    <button class="clear_button" onclick="SetZeroPoint()">Обнулить</button>
+                </div>
+                <div>
+                    <p id="title_menu_text">Единицы измерения</p>
+                    <button class="button" onclick="ChangeSettings(false, null, null)">Граммы</button>
+                    <button class="button" onclick="ChangeSettings(true, null, null)">Килограммы</button>
+                </div>
+                <br/>
+                <div>
+                    <details id="input_detail">
+                        <summary id="input_summary">Таблица</summary>
+                        <br/>
+                        <br/>
+                        <div style="width: 100%;">
+                            <br/>
+                            <button class="button" onclick="sendGCODE('W10')">Очистить</button>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <span/>
+                            <table id="test_table">
+                                <thead id="test_table_head">
+                                    <th id="test_table_th" scope="col">Индекс</th>
+                                    <th id="test_table_th" scope="col">Вес</th>
+                                    <th id="test_table_th" scope="col">Длинна</th>
+                                </thead>
+                                <tbody id="test_table_body">
+                                    <tr>
+                                        <td id="test_table_td">0</td>
+                                        <td id="test_table_td">200</td>
+                                        <td id="test_table_td">20</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="test_table_td">1</td>
+                                        <td id="test_table_td">200</td>
+                                        <td id="test_table_td">20</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+                <div>
+                    <p id="title_menu_text">Настройки</p>
+                    <!--<button class="button" onclick="sendGCODE('W1')">Калибровка</button>-->
+                    <details id="input_detail">
+                        <summary id="input_summary">Калибровка</summary>
+                        <br/>
+                        <br/>
+                        <div style="width: 100%;">
+                            <input type="number" value="0" placeholder="Базовый вес..." id="standart_weight_input"></input>
+                            <span/>
+                            <button class="button" onclick="sendGCODE('W1 ' +  + document.getElementById('standart_weight_input').value)">Принять</button>
+                            <p id="prompt_text"> 
+                                Инструкция по выполнению калибровки.
+                                <br/>
+                                <br/>
+                                1. Убрать все из чаши весов.
+                                <br/>
+                                2. Написать массу в соответсвующее поле ввода.
+                                <br/>
+                                3. Нажать на кнопку принять.
+                                <br/>
+                                4. В течении 10 секунд положить груз с данной массой на весы и дождаться результата калибровки (не касаясь весов и не кладя в них грузы).
+                                <br/>
+                                <br/>
+                                P.S. При не соблюдении порядка действий работоспособность не гарантирована.
+                            </p>
+                        </div>
+                    </details>
+                    <br/>
+                    <details id="input_detail">
+                        <summary id="input_summary">Коэффициент</summary>
+                        <br/>
+                        <br/>
+                        <div style="width: 100%;">
+                            <input type="number" value="0" placeholder="Новый коэффицент..." id="coefficient_input"></input>
+                            <span/>
+                            <button class="button" onclick="sendGCODE('W2 ' + document.getElementById('coefficient_input').value)">Принять</button>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </center>
+    </body>
+</html>
