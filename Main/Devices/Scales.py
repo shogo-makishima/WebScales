@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from traceback import format_exception
 
 from Main import DataManager
+import Main
 from Main.Devices import GPIO, IS_RASPI, BOARD
 from Main.Libs.HX711.HX711 import HX711, GenericHX711Exception, time
 from Main.Libs.Thread import Thread
@@ -85,6 +86,8 @@ class Scales:
                     if (DataManager.dataContainer.weight <= 2): DataManager.dataContainer.weight = 0
 
                     weightArray.clear()
+
+                    Main.TableManager.table.AddPlotPoint()
 
                     Debug.Message(Debug, f"Weight: {DataManager.dataContainer.weight};")
                 
