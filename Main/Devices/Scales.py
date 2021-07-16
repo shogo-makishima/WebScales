@@ -44,6 +44,8 @@ class Scales:
 
         maxWeightArray: int = 4
 
+        lastWeight: float = 0
+
         while (True):
             try:
                 if (not self.isOpen):
@@ -53,9 +55,9 @@ class Scales:
 
                 weight: float = round(self.hx711.GetWeight(), 1)
 
-                if (weight <= 2): weight = 0
-                elif (weight == -round(self.hx711.tareWeight, 1)): weight = 0
-                elif (weight >= DataManager.settingsContainer.maxWeight):
+                if (abs(weight) <= 3): weight = 0
+                elif (abs(weight) == -round(self.hx711.tareWeight, 1)): weight = 0
+                elif (abs(weight) >= DataManager.settingsContainer.maxWeight):
                     if (len(weightArray) > 0):
                         weight = weightArray[-1]
                     else: weight = 0
@@ -74,24 +76,26 @@ class Scales:
                     # Debug.Error(Debug, f"Array: {weightArray}")
 
                     for i in range(maxWeightArray):
-                        nonZeroArray: list = [i for i in weightArray if i > 0]
+                        nonZeroArray: list = [abs(i) for i in weightArray if abs(i) > 0]
                         
                         if (nonZeroArray != list()):
                             min_w: float = min(nonZeroArray)
-                            current_w: float = weightArray[i]
+                            current_w: float = abs(weightArray[i])
 
                             if (current_w / min_w > 10): weightArray[i] = min_w
 
                     DataManager.dataContainer.weight = round(sum(weightArray) / len(weightArray), 1)
-                    if (DataManager.dataContainer.weight <= 2): DataManager.dataContainer.weight = 0
+                    if (abs(DataManager.dataContainer.weight) <= 2): DataManager.dataContainer.weight = 0
 
                     weightArray.clear()
 
                     Main.TableManager.table.AddPlotPoint()
 
-                    Debug.Message(Debug, f"Weight: {DataManager.dataContainer.weight};")
+                    if (abs(DataManager.dataContainer.weight - lastWeight) > 10): Debug.Message(Debug, f"Weight: {DataManager.dataContainer.weight};")
+
+                    lastWeight = DataManager.dataContainer.weight
                 
-                time.sleep(0.1)
+                time.sleep(0.05)
             except Exception as exception:
                 Debug.Error(Debug, exception)
 

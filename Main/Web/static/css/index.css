@@ -38,6 +38,46 @@
     background-color: #4b4b4b;
 }
 
+.test_button_main {
+    background-color: #646464;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    width: 30%;
+    height: 150px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 46px;
+    cursor: pointer;
+}
+.test_button_main:hover {
+    background-color: #575757;
+}
+.test_button_main:active {
+    background-color: #4b4b4b;
+}
+
+.test_button_update {
+    background-color: #646464;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    width: 20%;
+    height: 150px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 46px;
+    cursor: pointer;
+}
+.test_button_update:hover {
+    background-color: #575757;
+}
+.test_button_update:active {
+    background-color: #4b4b4b;
+}
+
 #standart_weight_input {
     background-color: #646464;
     border: none;
@@ -71,6 +111,44 @@
 }
 
 #coefficient_input::placeholder {
+    color: whitesmoke;
+    font-size: 24px;
+    font-style: italic;
+}
+
+#standart_test_name {
+    background-color: #646464;
+    border: none;
+    color: white;
+    width: 30%;
+    height: 148px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 46px;
+    border-radius: 5px;
+}
+
+#standart_test_name::placeholder {
+    color: whitesmoke;
+    font-size: 24px;
+    font-style: italic;
+}
+
+#standart_test_size {
+    background-color: #646464;
+    border: none;
+    color: white;
+    width: 30%;
+    height: 148px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 46px;
+    border-radius: 5px;
+}
+
+#standart_test_size::placeholder {
     color: whitesmoke;
     font-size: 24px;
     font-style: italic;
@@ -188,4 +266,10 @@ input[type=number] {
     border-bottom: 3px inset rgb(73, 73, 73);
     border-right: 3px solid rgb(73, 73, 73);
     border-left: 3px solid rgb(73, 73, 73);
+}
+
+#list_files {
+    width: 100%;
+    height: 250px;
+    overflow-y: scroll;
 }

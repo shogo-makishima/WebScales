@@ -17,7 +17,21 @@ function GetUpdate() {
         });
     }
 
-    window.setTimeout(GetUpdate, 1000);
+    window.setTimeout(GetUpdate, 250);
+}
+
+function ChangePause() {
+    if (wasServerAwake) {
+        $.post({
+            url: "/api/set_pause_table",
+            cache: false,
+            contentType: 'application/json',
+            statusCode: {
+                200: function(data) {
+                }
+            }
+        });
+    }
 }
 
 function ChangeSettings(isGr = null, scaleCalibration = null, maxWeight = null) {
@@ -54,6 +68,51 @@ function SetZeroPoint() {
                 200: function(data) {
                     //var json = JSON.parse(data);
                     Update(data);
+                }
+            }
+        });
+    }
+}
+
+function SetNewTest(name = null, size = 10) {
+    if (wasServerAwake) {
+        $.post({
+            url: "/api/set_new_test",
+            cache: false,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({
+                name: name,
+                size: size,
+            }),
+            statusCode: {
+                200: function(data) {
+                }
+            }
+        });
+    }
+}
+
+function GetFileList() {
+    if (wasServerAwake) {
+        $.ajax({
+            type: "GET",
+            url: "/api/get_file_list",
+            cache: false,
+            dataType: "text/json",
+            statusCode: {
+                200: function(data) {
+                    var json = JSON.parse(data.responseText);
+                    
+                    $("#list_files").empty();
+                    
+                    for (let i = 0; i < json["files"]["length"]; i++) {
+                        $("#list_files").append("<a href=\"/download/" + json["files"][i] + "\">" + json["files"][i] + "</a>");
+                        $("#list_files").append("<span><span/>");
+                        $("#list_files").append("<br/>");
+                    }
+                    
+                    // `<a href="${json["directory"]}/${json["files"][i]}>${json["files"][i]}</a>`;
                 }
             }
         });
@@ -105,8 +164,9 @@ function getDataUpdate() {
 */
 
 function Update(json) {
+    console.log(json);
     setWeight(json["weight"], json["isGr"]);
-    // setTestTable(json);
+    setTestDebug(json["testName"], json["testSize"], json["testPause"])
 }
 
 function clearTable() {
@@ -128,7 +188,14 @@ function setTestTable(data) {
         `;
     }
 }
+
 function setWeight(weight, mode) {
-    document.getElementById("units").innerHTML = `${(mode) ? " кг." : " гр."}`
+    document.getElementById("units").innerHTML = `${(mode) ? " кг." : " гр."}`;
     document.getElementById("weight").innerHTML = (mode) ?  Math.round(weight * 0.01) / 10 : weight;
+}
+
+function setTestDebug(name, size, pause) {
+    document.getElementById("file_name_debug").innerHTML = `${name}`;
+    document.getElementById("file_size_debug").innerHTML = `${size}`;
+    document.getElementById("file_pause_debug").innerHTML = `${(pause) ? "Приостановлено" : "Запущено"}`;
 }

@@ -25,38 +25,36 @@
                 <br/>
                 <div>
                     <details id="input_detail">
-                        <summary id="input_summary">Таблица</summary>
+                        <summary id="input_summary">Испытания</summary>
                         <br/>
                         <br/>
                         <div style="width: 100%;">
+                            <p id="file_name_debug"> Null </p>
+                            <p id="file_pause_debug"> Null </p>
+                            <p id="file_size_debug"> Null </p>
+                            <span></span>
                             <br/>
-                            <button class="button" onclick="sendGCODE('W10')">Очистить</button>
+                            <input type="text" value="test" placeholder="Название: " id="standart_test_name"></input>
+                            <input type="number" value="10" placeholder="Размер: " id="standart_test_size"></input>
+                            <button class="test_button_update" onclick="SetNewTest(document.getElementById('standart_test_name').value, document.getElementById('standart_test_size').value)">Старт</button>
+                            <span></span>
                             <br/>
                             <br/>
                             <br/>
-                            <span/>
-                            <table id="test_table">
-                                <thead id="test_table_head">
-                                    <th id="test_table_th" scope="col">Индекс</th>
-                                    <th id="test_table_th" scope="col">Вес</th>
-                                    <th id="test_table_th" scope="col">Длинна</th>
-                                </thead>
-                                <tbody id="test_table_body">
-                                    <tr>
-                                        <td id="test_table_td">0</td>
-                                        <td id="test_table_td">200</td>
-                                        <td id="test_table_td">20</td>
-                                    </tr>
-                                    <tr>
-                                        <td id="test_table_td">1</td>
-                                        <td id="test_table_td">200</td>
-                                        <td id="test_table_td">20</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <button class="test_button_main" onclick="ChangePause()">Пауза</button>
+                            <button class="test_button_main" onclick="">Завершить</button>
+                            <button class="test_button_update" onclick="GetFileList()">Обновить</button>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div id="list_files">
+                            </div>
+                            <span></span>
                         </div>
                     </details>
                 </div>
+                <span></span>
+                <br/>
                 <div>
                     <p id="title_menu_text">Настройки</p>
                     <!--<button class="button" onclick="sendGCODE('W1')">Калибровка</button>-->

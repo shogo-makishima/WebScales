@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class ByteType:
     def __init__(self, code = "\33[0m"): self.code = code
     def __str__(self): return self.code
@@ -13,20 +15,20 @@ class Colored:
 
 class Debug:
     @staticmethod
-    def Message(self, object: object = "MESSAGE"):
-        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_BLINK}{Colored.TEXT_ITALIC}MESSAGE: {Colored.TEXT_STANDART}{object.__str__()}")
+    def Message(self, object: object = "MESSAGE", withDate: bool = True):
+        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_BLINK}{Colored.TEXT_ITALIC}{datetime.now().strftime('[%Y.%m.%d %H:%M:%S] -->') if (withDate) else ''} MESSAGE: {Colored.TEXT_STANDART}{object.__str__()}")
 
     @staticmethod
-    def Success(self, object: object = "SUCCESS"):
-        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_GREEN}{Colored.TEXT_ITALIC}SUCCESS: {Colored.TEXT_STANDART}{object.__str__()}")
+    def Success(self, object: object = "SUCCESS", withDate: bool = True):
+        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_GREEN}{Colored.TEXT_ITALIC}{datetime.now().strftime('[%Y.%m.%d %H:%M:%S] -->') if (withDate) else ''} SUCCESS: {Colored.TEXT_STANDART}{object.__str__()}")
 
     @staticmethod
-    def Warning(self, object: object = "WARNING"):
-        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_YELLOW}{Colored.TEXT_ITALIC}WARNING: {Colored.TEXT_STANDART}{object.__str__()}")
+    def Warning(self, object: object = "WARNING", withDate: bool = True):
+        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_YELLOW}{Colored.TEXT_ITALIC}{datetime.now().strftime('[%Y.%m.%d %H:%M:%S] -->') if (withDate) else ''} WARNING: {Colored.TEXT_STANDART}{object.__str__()}")
 
     @staticmethod
-    def Error(self, object: object = "ERROR"):
-        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_RED}{Colored.TEXT_ITALIC}ERROR: {Colored.TEXT_STANDART}{object.__str__()}")
+    def Error(self, object: object = "ERROR", withDate: bool = True):
+        print(f"{Colored.TEXT_BOLD}{Colored.TEXT_RED}{Colored.TEXT_ITALIC}{datetime.now().strftime('[%Y.%m.%d %H:%M:%S] -->') if (withDate) else ''} ERROR: {Colored.TEXT_STANDART}{object.__str__()}")
 
 
 """
