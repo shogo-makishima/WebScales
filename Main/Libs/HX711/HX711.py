@@ -128,10 +128,7 @@ class HX711:
 
     def Calibration(self, currentWeight: float, count: int = 1):
         if (currentWeight != 0):
-
-            for i in range(count):
-                localWeight = self.GetUnits()
-                print(localWeight, currentWeight / 0.035274, self.tareWeight / 0.035274)
+            localWeight = self.GetUnits()
 
             localCalibration: float = (self.GetWeight()) / (currentWeight)
             if (localCalibration != 0): self.scaleCalibration = localCalibration
