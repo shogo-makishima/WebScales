@@ -39,10 +39,11 @@ class Table:
         if (len(self.plotPointsArray) == 0): self.plotPointsArray.append(PlotPoint(dataContainer.weight, 0))
         elif (abs(self.plotPointsArray[-1].x - dataContainer.weight) > settingsContainer.boundWeight): self.plotPointsArray.append(PlotPoint(dataContainer.weight, len(self.plotPointsArray)))
 
-        if (len(self.plotPointsArray) > self.maxPoints): self.SaveTableToFile()
+        if (len(self.plotPointsArray) >= self.maxPoints): self.SaveTableToFile()
 
-    def ChangePause(self) -> None:
-        self.isPause = not self.isPause
+    def ChangePause(self, getPause: bool = None) -> None:
+        if (getPause != None and type(getPause) == bool): self.isPause = getPause  
+        else: self.isPause = not self.isPause
 
     def UpdateListTables(self) -> None:
         local_files = list(filter(lambda x: x if x[-len(self.fileType):] == self.fileType else None, os.listdir(self.workDirectiory)))
@@ -50,12 +51,13 @@ class Table:
 
     def GetTableName(self) -> str:
         if (not self.tableWasCreate): return "Null"
+
         return self.name
  
     def GetTableSize(self) -> float:
         if (not self.tableWasCreate): return "Null"
 
-        return round(self.maxPoints / 100 * len(self.plotPointsArray), 1)
+        return round((100 / self.maxPoints) * len(self.plotPointsArray), 1)
 
     @Thread
     def Clear(self) -> None:
@@ -63,6 +65,8 @@ class Table:
 
     @Thread
     def SaveTableToFile(self) -> None:
+        if (self.isSaving or not self.tableWasCreate): return
+
         self.isSaving = True
 
         Debug.Warning(Debug, f"Saving table with name: {self.name}")
@@ -98,6 +102,8 @@ class Table:
         worksheet.insert_chart('D2', chart, {'x_scale': 2, 'y_scale': 1})
 
         writer.save()
+
+        self.Clear()
 
         self.tableWasCreate = False
         self.isSaving = False

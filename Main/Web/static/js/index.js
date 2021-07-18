@@ -1,5 +1,6 @@
 var currentTestTableLenght = 0;
 var wasServerAwake = false;
+var fileFirstLoad = false;
 
 function GetUpdate() {
     if (wasServerAwake) {
@@ -15,6 +16,11 @@ function GetUpdate() {
                 }
             }
         });
+        
+        if (fileFirstLoad === false) {
+            GetFileList();
+            fileFirstLoad = true;
+        }
     }
 
     window.setTimeout(GetUpdate, 250);
@@ -26,6 +32,53 @@ function ChangePause() {
             url: "/api/set_pause_table",
             cache: false,
             contentType: 'application/json',
+            statusCode: {
+                200: function(data) {
+                }
+            }
+        });
+    }
+}
+
+function CloseTable() {
+    if (wasServerAwake) {
+        $.post({
+            url: "/api/set_close_table",
+            cache: false,
+            contentType: 'application/json',
+            statusCode: {
+                200: function(data) {
+                }
+            }
+        });
+    }
+}
+
+function ClearTable() {
+    if (wasServerAwake) {
+        $.post({
+            url: "/api/set_clear_table",
+            cache: false,
+            contentType: 'application/json',
+            statusCode: {
+                200: function(data) {
+                }
+            }
+        });
+    }
+}
+
+function SetCalibrationScales(weight = null, scaleCalibration = null) {
+    if (wasServerAwake) {
+        $.post({
+            url: "/api/set_calibration_scales",
+            cache: false,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({
+                weight: weight,
+                scaleCalibration: scaleCalibration,
+            }),
             statusCode: {
                 200: function(data) {
                 }
@@ -93,6 +146,25 @@ function SetNewTest(name = null, size = 10) {
     }
 }
 
+function Delete(filename) {
+    if (wasServerAwake) {
+        $.post({
+            url: "/delete",
+            cache: false,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({
+                filename: filename,
+            }),
+            statusCode: {
+                200: function(data) {
+                    setFileManager(data);
+                }
+            }
+        });
+    }
+}
+
 function GetFileList() {
     if (wasServerAwake) {
         $.ajax({
@@ -104,15 +176,7 @@ function GetFileList() {
                 200: function(data) {
                     var json = JSON.parse(data.responseText);
                     
-                    $("#list_files").empty();
-                    
-                    for (let i = 0; i < json["files"]["length"]; i++) {
-                        $("#list_files").append("<a href=\"/download/" + json["files"][i] + "\">" + json["files"][i] + "</a>");
-                        $("#list_files").append("<span><span/>");
-                        $("#list_files").append("<br/>");
-                    }
-                    
-                    // `<a href="${json["directory"]}/${json["files"][i]}>${json["files"][i]}</a>`;
+                    setFileManager(json);
                 }
             }
         });
@@ -164,28 +228,33 @@ function getDataUpdate() {
 */
 
 function Update(json) {
-    console.log(json);
     setWeight(json["weight"], json["isGr"]);
-    setTestDebug(json["testName"], json["testSize"], json["testPause"])
+    setTestDebug(json["testName"], json["testSize"], json["testPause"]);
+
+    document.getElementById("coefficient_input").value = json["scaleCalibration"];
 }
 
-function clearTable() {
-    document.getElementById("test_table_body").innerHTML = "";
-    currentTestTableLenght = 0;
-}
+function setFileManager(json) {
+    $("#list_files").empty();
+                    
+    for (let i = 0; i < json["files"]["length"]; i++) {
+        $("#list_files").append("<p class=\"name_file_ref\">" + json["files"][i] + "</p>");
+        $("#list_files").append("<a id=\"download_file_ref\" href=\"/download/" + json["files"][i] + "\"> Скачать </a>");
 
-function setTestTable(data) {
-    clearTable();
-    var table = data["table"];
-    currentTestTableLenght = table["length"];
-    for (let i = 0; i < table["length"]; i++) {
-        document.getElementById("test_table_body").innerHTML += `
-            <tr>
-                <td id="test_table_td">${i}</td>
-                <td id="test_table_td">${table[i]["weight"]}</td>
-                <td id="test_table_td">${table[i]["lenght"]}</td>
-            </tr>
-        `;
+        var b_delete = $('<input/>').attr({
+            type: "button",
+            id: "remove_file_ref",
+            value: "Удалить",
+        });
+        b_delete.click(function() { Delete(json["files"][i]); });
+        $("#list_files").append(b_delete);
+        
+        
+        //$("#list_files").append("<p>" + json["files"][i]  + "</p>")
+        //x.append("<button class=\"button\" onclick=\"DownloadTable(\"1\")\">" + "Скачать" + "</button>");
+        $("#list_files").append("<span><span/>");
+        $("#list_files").append("<br/>");
+        $("#list_files").append("<br/>");
     }
 }
 
@@ -196,6 +265,6 @@ function setWeight(weight, mode) {
 
 function setTestDebug(name, size, pause) {
     document.getElementById("file_name_debug").innerHTML = `${name}`;
-    document.getElementById("file_size_debug").innerHTML = `${size}`;
+    document.getElementById("file_size_debug").innerHTML = `${size}${(size === "Null") ? "" : "%"}`;
     document.getElementById("file_pause_debug").innerHTML = `${(pause) ? "Приостановлено" : "Запущено"}`;
 }

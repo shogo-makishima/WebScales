@@ -14,7 +14,6 @@
                     <span id="weight" style="font-size: 256px; line-height: 128px;">NA</span>
                     <br/>
                     <br/>
-                    <button class="clear_button" onclick="if (currentTestTableLenght != 8) {sendGCODE('W11');}">Добавить</button>
                     <button class="clear_button" onclick="SetZeroPoint()">Обнулить</button>
                 </div>
                 <div>
@@ -29,9 +28,9 @@
                         <br/>
                         <br/>
                         <div style="width: 100%;">
-                            <p id="file_name_debug"> Null </p>
-                            <p id="file_pause_debug"> Null </p>
-                            <p id="file_size_debug"> Null </p>
+                            <p class="stats_file_ref" id="file_name_debug"> Null </p>
+                            <p class="stats_file_ref" id="file_pause_debug"> Null </p>
+                            <p class="stats_file_ref"><span id="file_size_debug"></span></p>
                             <span></span>
                             <br/>
                             <input type="text" value="test" placeholder="Название: " id="standart_test_name"></input>
@@ -42,7 +41,7 @@
                             <br/>
                             <br/>
                             <button class="test_button_main" onclick="ChangePause()">Пауза</button>
-                            <button class="test_button_main" onclick="">Завершить</button>
+                            <button class="test_button_main" onclick="CloseTable()">Завершить</button>
                             <button class="test_button_update" onclick="GetFileList()">Обновить</button>
                             <br/>
                             <br/>
@@ -65,7 +64,7 @@
                         <div style="width: 100%;">
                             <input type="number" value="0" placeholder="Базовый вес..." id="standart_weight_input"></input>
                             <span/>
-                            <button class="button" onclick="sendGCODE('W1 ' +  + document.getElementById('standart_weight_input').value)">Принять</button>
+                            <button class="button" onclick="SetCalibrationScales(document.getElementById('standart_weight_input').value)">Принять</button>
                             <p id="prompt_text"> 
                                 Инструкция по выполнению калибровки.
                                 <br/>
@@ -91,7 +90,7 @@
                         <div style="width: 100%;">
                             <input type="number" value="0" placeholder="Новый коэффицент..." id="coefficient_input"></input>
                             <span/>
-                            <button class="button" onclick="sendGCODE('W2 ' + document.getElementById('coefficient_input').value)">Принять</button>
+                            <button class="button" onclick="SetCalibrationScales(null, document.getElementById('coefficient_input').value)">Принять</button>
                         </div>
                     </details>
                 </div>

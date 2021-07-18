@@ -14,7 +14,6 @@ class Scales:
     hx711: HX711 = HX711(IS_RASPI, 3, 5, board=BOARD)
     isOpen: bool = False
 
-
     @Thread
     def SetZeroPoint(self) -> None:
         self.isOpen = False
@@ -24,16 +23,42 @@ class Scales:
         self.isOpen = True
 
     @Thread
+    def Calibration(self, weight: float) -> None:
+        if (not self.isOpen): return
+
+        self.isOpen = False
+
+        Debug.Message(Debug, "Start calibration wait 2 sec. and put the weight 8 sec.")
+        
+        time.sleep(2)
+
+        self.hx711.scaleCalibration = 1
+        self.hx711.Tare(5)
+
+        time.sleep(8)
+
+        self.hx711.Calibration(weight, 25)
+
+        DataManager.settingsContainer.scaleCalibration = Scales.hx711.scaleCalibration
+
+        Debug.Success(Debug, f"Calibtaion continue with scaleCalibration: {DataManager.settingsContainer.scaleCalibration}")
+        DataManager.Save()
+
+        self.isOpen = True
+
+    @Thread
     def Run(self) -> None:
         global hx711
 
-        time.sleep(10)
+        time.sleep(5)
 
         self.hx711.Reset()
 
         time.sleep(5)
         
         self.SetZeroPoint(Scales)
+
+        time.sleep(5)
 
         Debug.Message(Debug, f"Tare weight: {self.hx711.tareWeight} gr.")
 

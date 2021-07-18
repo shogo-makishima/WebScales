@@ -1,9 +1,11 @@
+from flask.helpers import url_for
 from Main.Libs.Debug import Debug
-from flask import Flask, render_template, request, send_from_directory, send_file
+from flask import Flask, render_template, request, send_from_directory, send_file, redirect
 from flask_restful import reqparse, abort, Api, Resource
 import Main.Data.Manager as DataManager
 from Main.Data.TableManager import table
 from Main.Devices.Scales import Scales
+import os
 
 """Сервер"""
 SERVER = Flask(__name__)
@@ -19,7 +21,8 @@ def setSettings():
     json = dict(request.json)
 
     if (json.get("isGr") != None): DataManager.settingsContainer.isGr = json["isGr"]
-    
+    DataManager.Save()
+
     DataManager.dataToSend.Update()
     return DataManager.dataToSend.__dict__, 200
 
@@ -50,12 +53,37 @@ def setNewTest():
 @SERVER.route("/api/set_pause_table", methods=["POST"])
 def setPauseTable():
     table.ChangePause()
-    print(table.isPause)
+    return {}, 200
+
+@SERVER.route("/api/set_close_table", methods=["POST"])
+def setCloseTable():
+    table.SaveTableToFile()
+    return {}, 200
+
+@SERVER.route("/api/set_calibration_scales", methods=["POST"])
+def setCalibrationScales():
+    json = dict(request.json)
+
+    if (json.get("weight") != None):
+        Scales.Calibration(Scales, float(json["weight"]))
+    elif (json.get("scaleCalibration") != None):
+        Scales.hx711.scaleCalibration = float(json["scaleCalibration"])
+        DataManager.settingsContainer.scaleCalibration = Scales.hx711.scaleCalibration
+        DataManager.Save()
+    
     return {}, 200
 
 @SERVER.route('/download/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
     return send_from_directory(table.workDirectiory, filename)
+
+@SERVER.route('/delete', methods=['GET', 'POST'])
+def delete():
+    json = dict(request.json)
+    os.remove(f"{table.workDirectiory}{json['filename']}")
+
+    table.UpdateListTables()
+    return { "directory": table.workDirectiory, "files": table.listTables }, 200
 
 class Data(Resource):
     def get(self):

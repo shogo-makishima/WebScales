@@ -1,3 +1,4 @@
+from threading import local
 import time
 from Main.Devices import GPIO
 
@@ -106,15 +107,15 @@ class HX711:
         return signed_data
 
     def GetUnits(self) -> int:
-        return self.Read() * 0.035274
+        return self.Read()
     
     def GetWeight(self, count: int = 1) -> int:
         numbers: list[int] = []
         for i in range(count):
-            read: int = self.GetUnits()
+            read: int = self.GetUnits() * 0.035274
             if (read): numbers.append(read)
 
-            if (i < count - 1): time.sleep(0.1)
+            if (i < count - 1): time.sleep(0.025)
 
         count: int = len(numbers)
         if (count == 0): count = 1
@@ -127,7 +128,12 @@ class HX711:
 
     def Calibration(self, currentWeight: float, count: int = 1):
         if (currentWeight != 0):
-            localCalibration: float = self.GetWeight(5) / currentWeight / 0.035274
+
+            for i in range(count):
+                localWeight = self.GetUnits()
+                print(localWeight, currentWeight / 0.035274, self.tareWeight / 0.035274)
+
+            localCalibration: float = (self.GetWeight()) / (currentWeight)
             if (localCalibration != 0): self.scaleCalibration = localCalibration
 
 """
