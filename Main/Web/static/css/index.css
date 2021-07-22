@@ -158,6 +158,25 @@
     font-style: italic;
 }
 
+#standart_test_time {
+    background-color: #646464;
+    border: none;
+    color: white;
+    width: 30%;
+    height: 148px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 46px;
+    border-radius: 5px;
+}
+
+#standart_test_time::placeholder {
+    color: whitesmoke;
+    font-size: 24px;
+    font-style: italic;
+}
+
 #input_detail {
     
 }

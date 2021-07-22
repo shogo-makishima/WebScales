@@ -44,7 +44,8 @@ def setNewTest():
 
     Debug.Error(Debug, json)
 
-    if (json.get("name") != None and json.get("size") != None):
+    if (json.get("name") != None and json.get("size") != None and json.get("time") != None):
+        table.time = float(json["time"])
         table.maxPoints = int(json["size"])
         table.SetNewTable(json["name"])
     

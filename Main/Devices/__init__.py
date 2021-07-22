@@ -18,3 +18,4 @@ else:
     GPIO.setmode(GPIO.BOARD)
 
 from Main.Devices.Scales import Scales
+from Main.Devices.Caliper import Caliper

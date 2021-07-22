@@ -1,5 +1,4 @@
 from __future__ import absolute_import, unicode_literals
-from traceback import format_exception
 
 from Main import DataManager
 import Main
@@ -13,6 +12,7 @@ from Main.Libs.Perfomance import Monitor
 class Scales:
     hx711: HX711 = HX711(IS_RASPI, 3, 5, board=BOARD)
     isOpen: bool = False
+    isReady: bool = False
 
     @Thread
     def SetZeroPoint(self) -> None:
@@ -54,6 +54,8 @@ class Scales:
 
         self.hx711.Reset()
 
+        Scales.hx711.scaleCalibration = DataManager.settingsContainer.scaleCalibration
+
         time.sleep(5)
         
         self.SetZeroPoint(Scales)
@@ -61,6 +63,8 @@ class Scales:
         time.sleep(5)
 
         Debug.Message(Debug, f"Tare weight: {self.hx711.tareWeight} gr.")
+
+        self.isReady = True
 
         weightArray: list = []
         
@@ -114,13 +118,11 @@ class Scales:
 
                     weightArray.clear()
 
-                    Main.TableManager.table.AddPlotPoint()
-
                     if (abs(DataManager.dataContainer.weight - lastWeight) > 10): Debug.Message(Debug, f"Weight: {DataManager.dataContainer.weight};")
 
                     lastWeight = DataManager.dataContainer.weight
                 
-                time.sleep(0.05)
+                time.sleep(0.025)
             except Exception as exception:
                 Debug.Error(Debug, exception)
 

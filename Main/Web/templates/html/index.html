@@ -34,15 +34,20 @@
                             <span></span>
                             <br/>
                             <input type="text" value="test" placeholder="Название: " id="standart_test_name"></input>
-                            <input type="number" value="10" placeholder="Размер: " id="standart_test_size"></input>
-                            <button class="test_button_update" onclick="SetNewTest(document.getElementById('standart_test_name').value, document.getElementById('standart_test_size').value)">Старт</button>
+                            <input type="number" value="100" placeholder="Размер: " id="standart_test_size"></input>
+                            <input type="number" value="0.2" placeholder="Время: " id="standart_test_time"></input>
                             <span></span>
                             <br/>
                             <br/>
                             <br/>
                             <button class="test_button_main" onclick="ChangePause()">Пауза</button>
                             <button class="test_button_main" onclick="CloseTable()">Завершить</button>
-                            <button class="test_button_update" onclick="GetFileList()">Обновить</button>
+                            <button class="test_button_update" onclick="SetNewTest(document.getElementById('standart_test_name').value, document.getElementById('standart_test_size').value, document.getElementById('standart_test_time').value)">Старт</button>
+                            <span></span>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <button class="test_button_main" onclick="GetFileList()">Обновить</button>
                             <br/>
                             <br/>
                             <br/>

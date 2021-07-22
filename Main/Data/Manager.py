@@ -3,20 +3,21 @@ from Main.Data.PlotPoint import PlotPoint
 import jsonpickle, os
 from Main.Libs.Thread import Thread
 
-SAVE_PATH: str = f"{os.getcwd()}/Main/Data/Settings/"
-
 class SettingsContainer:
     """Контейнер настроек"""
-    def __init__(self, scaleCalibration: float = -4.53, isGr: bool = False, maxWeight: float = 20000, boundWeight: float = 10.0) -> None:
+    def __init__(self, scaleCalibration: float = -4.53, isGr: bool = False, maxWeight: float = 20000, boundWeight: float = 10.0, time: float = 0.2, path: str = "/home/pi/WebScales/") -> None:
         self.scaleCalibration = scaleCalibration
         self.isGr = isGr
         self.maxWeight = maxWeight
         self.boundWeight = boundWeight
+        self.time = time
+        self.path = path
     
     def GetJson(self) -> str:
         return jsonpickle.encode(self)
 
 settingsContainer: SettingsContainer = SettingsContainer()
+SAVE_PATH: str = f"{settingsContainer.path}/Main/Data/Settings/"
 
 def Load():
     global settingsContainer, SAVE_PATH
@@ -47,6 +48,7 @@ class DataContainer:
     def __init__(self) -> None:
         self.weight: float = 0.0
         self.lenght: float = 0.0
+        self.time: float = 0.0
     
     def GetJson(self) -> str:
         return jsonpickle.encode(self)

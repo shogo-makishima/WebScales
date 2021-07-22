@@ -127,7 +127,7 @@ function SetZeroPoint() {
     }
 }
 
-function SetNewTest(name = null, size = 10) {
+function SetNewTest(name = null, size = 100, time = 0.2) {
     if (wasServerAwake) {
         $.post({
             url: "/api/set_new_test",
@@ -137,6 +137,7 @@ function SetNewTest(name = null, size = 10) {
             data: JSON.stringify({
                 name: name,
                 size: size,
+                time: time,
             }),
             statusCode: {
                 200: function(data) {
@@ -265,6 +266,14 @@ function setWeight(weight, mode) {
 
 function setTestDebug(name, size, pause) {
     document.getElementById("file_name_debug").innerHTML = `${name}`;
-    document.getElementById("file_size_debug").innerHTML = `${size}${(size === "Null") ? "" : "%"}`;
+
+    var lastSize_STR = document.getElementById("file_size_debug").innerHTML;
+    if (lastSize_STR === "Null" || size === "Null") {
+        document.getElementById("file_size_debug").innerHTML = `${size}${(size === "Null") ? "" : "%"}`;
+    } else {
+        var lastSize = parseInt(document.getElementById("file_size_debug").innerHTML);
+        document.getElementById("file_size_debug").innerHTML = `${(size > lastSize) ? size : lastSize}${(size === "Null") ? "" : "%"}`;
+    }
+
     document.getElementById("file_pause_debug").innerHTML = `${(pause) ? "Приостановлено" : "Запущено"}`;
 }

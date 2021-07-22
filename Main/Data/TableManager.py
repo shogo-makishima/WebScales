@@ -1,3 +1,4 @@
+import Main
 from threading import local
 from Main.Data.Manager import *
 from Main.Libs.Thread import Thread
@@ -12,15 +13,20 @@ IS_SAVING: bool = False
 class Table:
     isSaving: bool = False
     tableWasCreate: bool = False
+    isRun: bool = True
 
     def __init__(self) -> None:
         self.name: str = "Empty"
         self.plotPointsArray: list[PlotPoint] = []
-        self.workDirectiory: str = f"{os.getcwd()}/Main/Data/Sheets/"
+        self.workDirectiory: str = f"{settingsContainer.path}/Main/Data/Sheets/"
         self.listTables: list[str] = []
         self.fileType: str = "xlsx"
         self.maxPoints: int = 5
         self.isPause: bool = False
+
+        self.time: float = 0.1
+        self.startTime: float = 0.0
+        self.lastTime: float = 0.0
     
     def SetNewTable(self, name: str) -> None:
         if (self.isSaving): return
@@ -31,13 +37,16 @@ class Table:
 
         self.tableWasCreate = True
 
+        self.startTime = time.time()
+        self.lastTime = self.startTime
+
         Debug.Warning(Debug, f"Set table with name: {self.name}")
 
     def AddPlotPoint(self) -> None:
         if (self.isSaving or not self.tableWasCreate or self.isPause): return
 
         if (len(self.plotPointsArray) == 0): self.plotPointsArray.append(PlotPoint(dataContainer.weight, 0))
-        elif (abs(self.plotPointsArray[-1].x - dataContainer.weight) > settingsContainer.boundWeight): self.plotPointsArray.append(PlotPoint(dataContainer.weight, len(self.plotPointsArray)))
+        elif (abs(self.plotPointsArray[-1].x - dataContainer.weight) > self.boundWeight): self.plotPointsArray.append(PlotPoint(dataContainer.weight, len(self.plotPointsArray)))
 
         if (len(self.plotPointsArray) >= self.maxPoints): self.SaveTableToFile()
 
@@ -60,6 +69,17 @@ class Table:
         return round((100 / self.maxPoints) * len(self.plotPointsArray), 1)
 
     @Thread
+    def Update(self) -> None:
+        while (self.isRun):
+            if (not Main.Devices.Scales.isReady or self.isSaving or not self.tableWasCreate or self.isPause): continue
+
+            if ((time.time() - self.lastTime) >= self.time):
+                self.plotPointsArray.append(PlotPoint(dataContainer.weight, len(self.plotPointsArray), round(time.time() - self.startTime, 1)))
+                self.lastTime = time.time()
+            
+            if (len(self.plotPointsArray) >= self.maxPoints): self.SaveTableToFile()
+
+    @Thread
     def Clear(self) -> None:
         self.plotPointsArray.clear()
 
@@ -71,11 +91,12 @@ class Table:
 
         Debug.Warning(Debug, f"Saving table with name: {self.name}")
 
-        data = {"Weight": list(), "Lenght": list()}
+        data = {"Weight": list(), "Lenght": list(), "Time": list()}
 
         for point in self.plotPointsArray:
             data["Weight"].append(point.x)
             data["Lenght"].append(point.y)
+            data["Time"].append(point.z)
 
         dataFrame = pandas.DataFrame(data)
 
@@ -90,7 +111,7 @@ class Table:
 
         chart.add_series({
             'values':     f"=Sheet1!$B${2}:$B${2 + len(self.plotPointsArray)}",
-            'categories': f"=Sheet1!$C${2}:$C${2 + len(self.plotPointsArray)}",
+            'categories': f"=Sheet1!$D${2}:$D${2 + len(self.plotPointsArray)}",
             'line':       {'color': 'black'},
         })
 
@@ -99,7 +120,7 @@ class Table:
 
         chart.set_legend({'position': 'none'})
 
-        worksheet.insert_chart('D2', chart, {'x_scale': 2, 'y_scale': 1})
+        worksheet.insert_chart('F2', chart, {'x_scale': 2, 'y_scale': 1})
 
         writer.save()
 
