@@ -74,14 +74,30 @@ class Table:
             if (not Main.Devices.Scales.isReady or self.isSaving or not self.tableWasCreate or self.isPause): continue
 
             if ((time.time() - self.lastTime) >= self.time):
-                self.plotPointsArray.append(PlotPoint(dataContainer.weight, len(self.plotPointsArray), round(time.time() - self.startTime, 1)))
+                self.plotPointsArray.append(PlotPoint(dataContainer.weight, dataContainer.lenght.value, round(time.time() - self.startTime, 1)))
                 self.lastTime = time.time()
             
             if (len(self.plotPointsArray) >= self.maxPoints): self.SaveTableToFile()
 
     @Thread
-    def Clear(self) -> None:
+    def Clear(self):
         self.plotPointsArray.clear()
+
+    def AddChart(self, workbook: xlsxwriter.workbook.Workbook, valueLine: str = "B", categotiesLine: str = "D", valueName: str = "Weight", categoriesName: str = "Time") -> None:
+        chart = workbook.add_chart({'type': 'line'})
+
+        chart.add_series({
+            'values':     f"=Sheet1!${valueLine}${2}:${valueLine}${2 + len(self.plotPointsArray)}",
+            'categories': f"=Sheet1!${categotiesLine}${2}:${categotiesLine}${2 + len(self.plotPointsArray)}",
+            'line':       {'color': 'black'},
+        })
+
+        chart.set_x_axis({'name': categoriesName, 'major_gridlines': {'visible': True, 'line': {'width': 1.25, 'dash_type': 'dash'}}, 'position_axis': 'on_tick'})
+        chart.set_y_axis({'name': valueName, 'major_gridlines': {'visible': True}, 'minor_gridlines': {'visible': True}})
+
+        chart.set_legend({'position': 'none'})
+
+        return chart
 
     @Thread
     def SaveTableToFile(self) -> None:
@@ -107,20 +123,8 @@ class Table:
         workbook: xlsxwriter.workbook.Workbook = writer.book
         worksheet = writer.sheets["Sheet1"]
 
-        chart = workbook.add_chart({'type': 'line'})
-
-        chart.add_series({
-            'values':     f"=Sheet1!$B${2}:$B${2 + len(self.plotPointsArray)}",
-            'categories': f"=Sheet1!$D${2}:$D${2 + len(self.plotPointsArray)}",
-            'line':       {'color': 'black'},
-        })
-
-        chart.set_x_axis({'name': 'Lenght', 'major_gridlines': {'visible': True, 'line': {'width': 1.25, 'dash_type': 'dash'}}, 'position_axis': 'on_tick'})
-        chart.set_y_axis({'name': 'Weight', 'major_gridlines': {'visible': True}, 'minor_gridlines': {'visible': True}})
-
-        chart.set_legend({'position': 'none'})
-
-        worksheet.insert_chart('F2', chart, {'x_scale': 2, 'y_scale': 1})
+        worksheet.insert_chart('F2', self.AddChart(workbook, "B", "D", "Weight"), {'x_scale': 2, 'y_scale': 1})
+        worksheet.insert_chart('F20', self.AddChart(workbook, "C", "D", "Lenght"), {'x_scale': 2, 'y_scale': 1})
 
         writer.save()
 

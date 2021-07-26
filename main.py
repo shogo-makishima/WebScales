@@ -9,6 +9,6 @@ if (__name__ == "__main__"):
     table.Update()
 
     Devices.Scales.Run(Devices.Scales)
-    Devices.Caliper.Update(Devices.Caliper)
+    Devices.Caliper.CaliperProcess.start()
 
-    Web.SERVER.run(Web.DEFAULT_IP, Web.DEFAULT_PORT, debug=Web.DEFAULT_DEBUG, use_reloader=False)
+    Web.SERVER.run(Web.DEFAULT_IP, Web.DEFAULT_PORT, debug=Web.DEFAULT_DEBUG, use_reloader=False, threaded=True)

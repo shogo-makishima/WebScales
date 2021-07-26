@@ -12,6 +12,7 @@ function GetUpdate() {
             statusCode: {
                 200: function(data) {
                     var json = JSON.parse(data.responseText);
+                    console.log(json)
                     Update(json);
                 }
             }
@@ -230,6 +231,7 @@ function getDataUpdate() {
 
 function Update(json) {
     setWeight(json["weight"], json["isGr"]);
+    setLenght(json["lenght"]);
     setTestDebug(json["testName"], json["testSize"], json["testPause"]);
 
     document.getElementById("coefficient_input").value = json["scaleCalibration"];
@@ -257,6 +259,10 @@ function setFileManager(json) {
         $("#list_files").append("<br/>");
         $("#list_files").append("<br/>");
     }
+}
+
+function setLenght(lenght) {
+    document.getElementById("lenght").innerHTML = lenght;
 }
 
 function setWeight(weight, mode) {

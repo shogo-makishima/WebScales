@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, send_from_directory, send_fil
 from flask_restful import reqparse, abort, Api, Resource
 import Main.Data.Manager as DataManager
 from Main.Data.TableManager import table
+from Main.Devices import Caliper
 from Main.Devices.Scales import Scales
 import os
 

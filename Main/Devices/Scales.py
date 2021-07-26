@@ -1,8 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
-from Main import DataManager
+import Main.Data.Manager as DataManager
 import Main
-from Main.Devices import GPIO, IS_RASPI, BOARD
+from Main.Devices import wiringpi
 from Main.Libs.HX711.HX711 import HX711, GenericHX711Exception, time
 from Main.Libs.Thread import Thread
 from Main.Libs.Debug import Debug
@@ -10,7 +10,7 @@ from Main.Libs.Perfomance import Monitor
 
 
 class Scales:
-    hx711: HX711 = HX711(IS_RASPI, 3, 5, board=BOARD)
+    hx711: HX711 = HX711(False, 15, 16, board=1)
     isOpen: bool = False
     isReady: bool = False
 

@@ -1,7 +1,7 @@
 from Main.Libs.Debug import Debug
 from Main.Data.PlotPoint import PlotPoint
 import jsonpickle, os
-from Main.Libs.Thread import Thread
+from Main.Libs.Thread import Thread, MULTI_MANAGER
 
 class SettingsContainer:
     """Контейнер настроек"""
@@ -47,9 +47,9 @@ class DataContainer:
     """Класс сохранения данных"""
     def __init__(self) -> None:
         self.weight: float = 0.0
-        self.lenght: float = 0.0
+        self.lenght = MULTI_MANAGER.Value("lenght", 0.0)
         self.time: float = 0.0
-    
+
     def GetJson(self) -> str:
         return jsonpickle.encode(self)
 
@@ -61,7 +61,7 @@ class DataToSend:
     
     def Update(self):
         self.weight = dataContainer.weight
-        self.lenght = dataContainer.lenght
+        self.lenght = dataContainer.lenght.value
 
         self.isGr = settingsContainer.isGr
         self.scaleCalibration = settingsContainer.scaleCalibration

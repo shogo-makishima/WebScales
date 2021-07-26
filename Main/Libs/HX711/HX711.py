@@ -1,6 +1,6 @@
 from threading import local
 import time
-from Main.Devices import GPIO
+from Main.Devices import wiringpi
 
 class GenericHX711Exception(Exception):
     pass
@@ -26,16 +26,16 @@ class HX711:
         # Максимальное кол-во попыток
         self.maxTries = 10
         
-        GPIO.setup(self.sck, GPIO.OUT)
-        GPIO.setup(self.dt, GPIO.IN)
+        wiringpi.pinMode(self.sck, 1)
+        wiringpi.pinMode(self.dt, 0)
     
     def PowerDown(self) -> None:
-        GPIO.output(self.sck, False)
-        GPIO.output(self.sck, True)
+        wiringpi.digitalWrite(self.sck, False)
+        wiringpi.digitalWrite(self.sck, True)
         time.sleep(0.01)
 
     def PowerUp(self) -> None:
-        GPIO.output(self.sck, False)
+        wiringpi.digitalWrite(self.sck, False)
         time.sleep(0.01)
     
     def Reset(self) -> None:
@@ -47,7 +47,7 @@ class HX711:
         time.sleep(0.5)
     
     def isReady(self) -> bool:
-        return (GPIO.input(self.dt) == 0)
+        return (wiringpi.digitalRead(self.dt) == 0)
     
     def SetChannelGain(self, num: int) -> bool:
         if (not 1 <= num <= 3):
@@ -55,8 +55,8 @@ class HX711:
             
         for _ in range(num):
             start_counter = time.perf_counter()
-            GPIO.output(self.sck, True)
-            GPIO.output(self.sck, False)
+            wiringpi.digitalWrite(self.sck, True)
+            wiringpi.digitalWrite(self.sck, False)
             end_counter = time.perf_counter()
             time_elapsed = float(end_counter - start_counter)
 
@@ -68,7 +68,7 @@ class HX711:
         return True
 
     def Read(self) -> int:
-        GPIO.output(self.sck, False)
+        wiringpi.digitalWrite(self.sck, False)
         readyCounter = 0
 
         while (not self.isReady()):
@@ -82,8 +82,8 @@ class HX711:
         for i in range(24):
             start_counter = time.perf_counter()
 
-            GPIO.output(self.sck, True)
-            GPIO.output(self.sck, False)
+            wiringpi.digitalWrite(self.sck, True)
+            wiringpi.digitalWrite(self.sck, False)
 
             end_counter = time.perf_counter()
             time_elapsed = float(end_counter - start_counter)
@@ -91,7 +91,7 @@ class HX711:
             if time_elapsed >= 0.00006:
                 return False
 
-            data_in = (data_in << 1) | GPIO.input(self.dt)
+            data_in = (data_in << 1) | wiringpi.digitalRead(self.dt)
 
         if (self.channel == 'A' and self.gain == 128): self.SetChannelGain(1)  # send one bit
         elif (self.channel == 'A' and self.gain == 64): self.SetChannelGain(3)  # send three bits
