@@ -35,7 +35,7 @@ class Scales:
         self.hx711.scaleCalibration = 1
         self.hx711.Tare(5)
 
-        time.sleep(8)
+        time.sleep(58)
 
         self.hx711.Calibration(weight, 25)
 

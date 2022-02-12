@@ -1,6 +1,8 @@
 var currentTestTableLenght = 0;
 var wasServerAwake = false;
 var fileFirstLoad = false;
+var coefficientFirstLoad = false;
+var lastCoefficient = 0;
 
 function GetUpdate() {
     if (wasServerAwake) {
@@ -234,7 +236,11 @@ function Update(json) {
     setLenght(json["lenght"]);
     setTestDebug(json["testName"], json["testSize"], json["testPause"]);
 
-    document.getElementById("coefficient_input").value = json["scaleCalibration"];
+    if (coefficientFirstLoad === false && lastCoefficient != json["scaleCalibration"]) {
+        document.getElementById("coefficient_input").value = json["scaleCalibration"];
+        coefficientFirstLoad = true;
+        lastCoefficient = json["scaleCalibration"];
+    }
 }
 
 function setFileManager(json) {
