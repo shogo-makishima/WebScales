@@ -1,7 +1,6 @@
 from threading import local
-import time
-from Main.Devices import wiringpi
-
+import time, wiringpi
+wiringpi.wiringPiSetup()
 class GenericHX711Exception(Exception):
     pass
 
@@ -113,10 +112,10 @@ class HX711:
     def GetWeight(self, count: int = 1) -> int:
         numbers: list[int] = []
         for i in range(count):
-            read: float = self.GetUnits() * 0.035274
+            read: int = self.GetUnits() * 0.035274
             if (read): numbers.append(read)
 
-            if (i < count - 1): time.sleep(0.001)
+            if (i < count - 1): time.sleep(0.025)
 
         count: int = len(numbers)
         if (count == 0): count = 1
@@ -135,9 +134,7 @@ class HX711:
             if (localCalibration != 0): self.scaleCalibration = localCalibration
 
 
-
-"""
-hx711 = HX711(False, 3, 5, board=GPIO.ZERO)
+hx711 = HX711(False, 8, 9, board=1)
 
 print(f"[DEBUG] Is Ready: {hx711.isReady()}")
 hx711.Reset()
@@ -159,7 +156,8 @@ try:
 
     while (True):
         weight: float = round(hx711.GetWeight(), 1)
-
+        print(weight)
+        
         if (weight <= 2): weight = 0
         elif (weight == -round(hx711.tareWeight, 1)): weight = 0
         elif (weight >= maxWeight):
@@ -183,10 +181,8 @@ try:
 
             weightArray.clear()
 
-            print(currentWeight)
+            
 
-        time.sleep(0.1)
+        time.sleep(0.5)
 except Exception as exception:
     print(exception.with_traceback())
-    GPIO.cleanup()
-"""

@@ -5,7 +5,7 @@ from Main.Libs.Thread import Thread, MULTI_MANAGER
 
 class SettingsContainer:
     """Контейнер настроек"""
-    def __init__(self, scaleCalibration: float = -4.53, isGr: bool = False, maxWeight: float = 20000, boundWeight: float = 10.0, time: float = 0.2, path: str = "/home/pi/WebScales/") -> None:
+    def __init__(self, scaleCalibration: float = -4.53, isGr: bool = False, maxWeight: float = 1000000, boundWeight: float = 10.0, time: float = 0.2, path: str = "/home/pi/WebScales/") -> None:
         self.scaleCalibration = scaleCalibration
         self.isGr = isGr
         self.maxWeight = maxWeight
@@ -31,6 +31,7 @@ def Load():
             Debug.Success(Debug, text)
     except Exception as exception:
         Debug.Error(Debug, exception)
+        Save()
 
 @Thread
 def Save():
@@ -46,6 +47,7 @@ def Save():
 class DataContainer:
     """Класс сохранения данных"""
     def __init__(self) -> None:
+        # self.weight = MULTI_MANAGER.Value("weight", 0.0)
         self.weight: float = 0.0
         self.lenght = MULTI_MANAGER.Value("lenght", 0.0)
         self.time: float = 0.0

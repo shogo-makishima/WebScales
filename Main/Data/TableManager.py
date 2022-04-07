@@ -74,7 +74,7 @@ class Table:
             if (not Main.Devices.Scales.isReady or self.isSaving or not self.tableWasCreate or self.isPause): continue
 
             if ((time.time() - self.lastTime) >= self.time):
-                self.plotPointsArray.append(PlotPoint(dataContainer.weight, dataContainer.lenght.value, round(time.time() - self.startTime, 1)))
+                self.plotPointsArray.append(PlotPoint(dataContainer.weight.value, dataContainer.lenght.value, round(time.time() - self.startTime, 1)))
                 self.lastTime = time.time()
             
             if (len(self.plotPointsArray) >= self.maxPoints): self.SaveTableToFile()

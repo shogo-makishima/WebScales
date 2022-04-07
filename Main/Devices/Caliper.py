@@ -10,8 +10,8 @@ from Main.Libs.Perfomance import Monitor
 
 
 isMM: bool = True
-DT: int = 9
-CLK: int = 8
+DT: int = 15
+CLK: int = 16
 isRun: bool = True
 zeroValue: float = 0.0
 lastValue: float = 0.0

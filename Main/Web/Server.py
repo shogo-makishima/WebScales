@@ -5,7 +5,7 @@ from flask_restful import reqparse, abort, Api, Resource
 import Main.Data.Manager as DataManager
 from Main.Data.TableManager import table
 from Main.Devices import Caliper
-from Main.Devices.Scales import Scales
+from Main.Devices import Scales, ScalesProcess
 import os
 
 """Сервер"""
@@ -29,7 +29,7 @@ def setSettings():
 
 @SERVER.route("/api/set_zero_point", methods=["POST"])
 def setZeroPoint():
-    Scales.SetZeroPoint(Scales)
+    ScalesProcess.SetZeroPoint()
 
     DataManager.dataToSend.Update()
     return DataManager.dataToSend.__dict__, 200
