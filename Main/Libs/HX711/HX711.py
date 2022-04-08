@@ -1,6 +1,7 @@
 from threading import local
 import time
 from Main.Devices import wiringpi
+from Main.Libs.Debug import Debug
 
 class GenericHX711Exception(Exception):
     pass
@@ -63,7 +64,7 @@ class HX711:
             if time_elapsed >= 0.00006:
                 result = self.Read()
                 if (result is False):
-                    raise GenericHX711Exception("channel was not set properly")
+                    Debug.Error("channel was not set properly")
             
         return True
 

@@ -7,12 +7,12 @@ from Main.Libs.Debug import Debug
 if (__name__ == "__main__"):
     Load()
 
-    table.Update()
-
     try:
         # Devices.Scales.Run(Devices.Scales)
         Devices.ScalesProcess.start()
         Devices.Caliper.CaliperProcess.start()
+
+        table.start()
 
         Web.SERVER.run(Web.DEFAULT_IP, Web.DEFAULT_PORT, debug=Web.DEFAULT_DEBUG, use_reloader=False, threaded=True)
     except Exception as exception:

@@ -3,19 +3,21 @@ from threading import local
 from Main.Data.Manager import *
 from Main.Libs.Thread import Thread
 
-import os, time, xlwt
+import os, time, xlwt, threading
 from datetime import datetime
 import pandas, xlsxwriter
 from pandas.core.frame import DataFrame
 
 IS_SAVING: bool = False
 
-class Table:
+class Table(threading.Thread):
     isSaving: bool = False
     tableWasCreate: bool = False
     isRun: bool = True
 
     def __init__(self) -> None:
+        super(Table, self).__init__()
+
         self.name: str = "Empty"
         self.plotPointsArray: list[PlotPoint] = []
         self.workDirectiory: str = f"{settingsContainer.path}/Main/Data/Sheets/"
@@ -68,18 +70,18 @@ class Table:
 
         return round((100 / self.maxPoints) * len(self.plotPointsArray), 1)
 
-    @Thread
-    def Update(self) -> None:
+    def run(self) -> None:
         while (self.isRun):
-            if (not Main.Devices.Scales.isReady or self.isSaving or not self.tableWasCreate or self.isPause): continue
+            time.sleep(0.01)
+
+            if (not Main.Devices.ScalesProcess.isReady or self.isSaving or not self.tableWasCreate or self.isPause): continue
 
             if ((time.time() - self.lastTime) >= self.time):
-                self.plotPointsArray.append(PlotPoint(dataContainer.weight.value, dataContainer.lenght.value, round(time.time() - self.startTime, 1)))
+                self.plotPointsArray.append(PlotPoint(dataContainer.weight, dataContainer.lenght.value, round(time.time() - self.startTime, 1)))
                 self.lastTime = time.time()
             
             if (len(self.plotPointsArray) >= self.maxPoints): self.SaveTableToFile()
 
-    @Thread
     def Clear(self):
         self.plotPointsArray.clear()
 
@@ -99,7 +101,6 @@ class Table:
 
         return chart
 
-    @Thread
     def SaveTableToFile(self) -> None:
         if (self.isSaving or not self.tableWasCreate): return
 

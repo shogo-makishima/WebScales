@@ -29,7 +29,7 @@ def setSettings():
 
 @SERVER.route("/api/set_zero_point", methods=["POST"])
 def setZeroPoint():
-    ScalesProcess.SetZeroPoint()
+    ScalesProcess.nextCommand = "setZeroPoint"
 
     DataManager.dataToSend.Update()
     return DataManager.dataToSend.__dict__, 200
@@ -67,10 +67,10 @@ def setCalibrationScales():
     json = dict(request.json)
 
     if (json.get("weight") != None):
-        Scales.Calibration(Scales, float(json["weight"]))
+        ScalesProcess.Calibration(float(json["weight"]))
     elif (json.get("scaleCalibration") != None):
-        Scales.hx711.scaleCalibration = float(json["scaleCalibration"])
-        DataManager.settingsContainer.scaleCalibration = Scales.hx711.scaleCalibration
+        ScalesProcess.hx711.scaleCalibration = float(json["scaleCalibration"])
+        DataManager.settingsContainer.scaleCalibration = ScalesProcess.hx711.scaleCalibration
         DataManager.Save()
     
     return {}, 200
